@@ -1,4 +1,7 @@
-# docker-lnmp-laravel
+# laravel 
+php 框架/解決方案
+
+## docker-lnmp-laravel
 alpine os with php, nginx, mysql(mariadb)
 
 ## 參考出處
