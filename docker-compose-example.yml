@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+
+  # php-fpm 7.3
+  php:
+    build:
+      context: .
+      dockerfile: ./php/Dockerfile
+    container_name: php
+    restart: unless-stopped
+    volumes:
+      - ./projects:/my_projects
+
+  # nginx
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./projects:/my_projects
+    environment:
+      - TZ=Asia/Taipei
+
+  # mysql 8
+  mysql:
+    image: mysql:8.0.32
+    command: --default-authentication-plugin=mysql_native_password --log-error=/var/lib/mysql/error.log --general-log=ON --general-log-file=/var/lib/mysql/general.log --slow-query-log=ON --slow-query-log-file=/var/lib/mysql/slow.log --log-output=FILE --sql-mode="ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO"
+    container_name: project.db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "HELLOworld!@#"
+      MYSQL_USER: "project"
+      MYSQL_PASSWORD: "123edsaqw"
+    ports:
+       - 3306:3306
+    volumes:
+       - /home/mysql-data:/var/lib/mysql
+       - /etc/localtime:/etc/localtime
+
+  adminer:
+    image: adminer
+    container_name: admin.db
+    restart: always
+    ports:
+      - 8081:8080
+
+# new rule
+networks:
+  default:
+    name: project-bridge
+    external: true
